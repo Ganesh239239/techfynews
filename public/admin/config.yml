@@ -2,5 +2,5 @@ backend:
   name: github
   repo: Ganesh239239/techfynews
   branch: main
-  base_url: https://lively-moon-1234.workers.dev
+  base_url: https://delicate-fog-0554.esportszen239.workers.dev
   auth_endpoint: auth
