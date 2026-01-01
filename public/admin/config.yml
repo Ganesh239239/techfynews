@@ -1,3 +1,5 @@
+site_url: https://techfynews.pages.dev
+
 backend:
   name: github
   repo: Ganesh239239/techfynews
@@ -5,11 +7,9 @@ backend:
   base_url: https://delicate-fog-0554.esportszen239.workers.dev/
   auth_endpoint: auth
 
-# REQUIRED
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
-# REQUIRED (default media library)
 media_library:
   name: uploadcare
 
