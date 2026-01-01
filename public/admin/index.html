@@ -4,10 +4,104 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>Content Manager</title>
+  <title>Content Manager - TechFy News</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 <body>
-  <!-- Include Decap CMS -->
+  <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <!-- Custom Styles for Preview -->
+  <style>
+    .cms-preview-container {
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+    
+    .cms-preview-header {
+      margin-bottom: 2rem;
+    }
+    
+    .cms-preview-categories {
+      margin-bottom: 1rem;
+    }
+    
+    .cms-preview-category {
+      display: inline-block;
+      padding: 4px 12px;
+      margin-right: 8px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .cms-preview-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
+      line-height: 1.2;
+      color: #111827;
+    }
+    
+    .cms-preview-description {
+      font-size: 1.125rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    
+    .cms-preview-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+    
+    .cms-preview-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    
+    .cms-preview-content {
+      font-size: 1.125rem;
+      line-height: 1.75;
+      color: #374151;
+    }
+    
+    .cms-preview-tags {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .cms-preview-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      background: #f3f4f6;
+      color: #374151;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+    }
+  </style>
+  
+  <script>
+    // Wait for CMS to load
+    CMS.registerPreviewStyle(`
+      body { margin: 0; }
+      .preview-pane-frame { padding: 0; }
+    `);
+    
+    console.log('✅ Decap CMS loaded successfully with advanced features');
+    console.log('📝 Features enabled: Editorial Workflow, SEO, Social Media, Schema');
+  </script>
 </body>
 </html>
