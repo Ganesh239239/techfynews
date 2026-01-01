@@ -1,4 +1,4 @@
-site_url: https://techfynews.netlify.app/
+site_url: https://techfynews.netlify.app
 
 backend:
   name: git-gateway
