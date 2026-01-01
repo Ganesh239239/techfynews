@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Ganesh239239/techfynews
   branch: main
-  base_url: https://your-site.pages.dev
+  base_url: https://techfynews.pages.dev
 
 media_folder: "static/images/uploads"
 public_folder: "/images/uploads"
