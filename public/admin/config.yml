@@ -1,19 +1,85 @@
 backend:
   name: github
-  repo: Ganesh239239/techfynews  # Your actual repo from the screenshot
+  repo: Ganesh239239/techfynews
   branch: main
   base_url: https://techfynews.pages.dev
-  auth_endpoint: /api/auth
 
-media_folder: "static/images/uploads"
-public_folder: "/images/uploads"
+media_folder: "src/assets/images"
+public_folder: "/images"
 
 collections:
+  # Blog Posts
   - name: "blog"
-    label: "Blog"
-    folder: "content/blog"
+    label: "Blog Posts"
+    folder: "src/content/blog"
     create: true
+    slug: "{{slug}}"
     fields:
       - {label: "Title", name: "title", widget: "string"}
-      - {label: "Publish Date", name: "date", widget: "datetime"}
+      - {label: "Description", name: "description", widget: "text", hint: "Meta description for SEO"}
+      - {label: "Publish Date", name: "pubDate", widget: "datetime"}
+      - {label: "Author", name: "author", widget: "relation", collection: "authors", search_fields: ["name"], value_field: "{{slug}}", display_fields: ["name"]}
+      - {label: "Featured Image", name: "heroImage", widget: "image"}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
+      - {label: "Draft", name: "draft", widget: "boolean", default: false}
+      - {label: "Categories", name: "categories", widget: "list", allow_add: true}
+      - {label: "Tags", name: "tags", widget: "list", allow_add: true}
+      - {label: "Series", name: "series", widget: "string", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}
+      
+      # SEO Fields (BitDoze theme supports these)
+      - label: "SEO Settings"
+        name: "seo"
+        widget: "object"
+        collapsed: true
+        fields:
+          - {label: "SEO Title", name: "title", widget: "string", required: false, hint: "Override title for search engines"}
+          - {label: "Meta Description", name: "description", widget: "text", required: false, hint: "155-160 characters"}
+          - {label: "Canonical URL", name: "canonical", widget: "string", required: false}
+          - {label: "No Index", name: "noindex", widget: "boolean", default: false}
+          
+      # Open Graph
+      - label: "Open Graph"
+        name: "og"
+        widget: "object"
+        collapsed: true
+        fields:
+          - {label: "OG Image", name: "image", widget: "image", required: false}
+          - {label: "OG Type", name: "type", widget: "select", options: ["article", "website"], default: "article"}
+
+  # Authors (BitDoze theme has author support)
+  - name: "authors"
+    label: "Authors"
+    folder: "src/content/authors"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Bio", name: "bio", widget: "text"}
+      - {label: "Avatar", name: "avatar", widget: "image"}
+      - {label: "Social Links", name: "social", widget: "object", fields: [
+          {label: "Twitter", name: "twitter", widget: "string", required: false},
+          {label: "GitHub", name: "github", widget: "string", required: false},
+          {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
+        ]}
+
+  # Categories
+  - name: "categories"
+    label: "Categories"
+    folder: "src/content/categories"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+
+  # Pages (About, Privacy, etc.)
+  - name: "pages"
+    label: "Pages"
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
       - {label: "Body", name: "body", widget: "markdown"}
