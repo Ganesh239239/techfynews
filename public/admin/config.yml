@@ -1,20 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: Ganesh239239/techfynews
   branch: main
-
-media_folder: "public/uploads"
-public_folder: "/uploads"
-
-site_url: https://your-live-site-url
-
-collections:
-  - name: "blog"
-    label: "Blog"
-    folder: "src/content/blog"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Publish Date", name: "date", widget: "datetime" }
-      - { label: "Description", name: "description", widget: "text" }
-      - { label: "Body", name: "body", widget: "markdown" }
+  base_url: https://lively-moon-1234.workers.dev
+  auth_endpoint: auth
