@@ -1,8 +1,7 @@
-site_url: https://techfynews.pages.dev
+site_url: https://YOUR-NETLIFY-URL.netlify.app
 
 backend:
-  name: github
-  repo: Ganesh239239/techfynews
+  name: git-gateway
   branch: main
 
 media_folder: "public/uploads"
