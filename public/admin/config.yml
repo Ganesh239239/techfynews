@@ -4,3 +4,23 @@ backend:
   branch: main
   base_url: https://YOUR-WORKER.workers.dev
   auth_endpoint: auth
+
+# REQUIRED
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+# REQUIRED (default media library)
+media_library:
+  name: uploadcare
+
+collections:
+  - name: "blog"
+    label: "Blog"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Body", name: "body", widget: "markdown" }
