@@ -1,8 +1,9 @@
 backend:
   name: github
-  repo: Ganesh239239/techfynews
+  repo: Ganesh239239/techfynews  # Your actual repo from the screenshot
   branch: main
   base_url: https://techfynews.pages.dev
+  auth_endpoint: /api/auth
 
 media_folder: "static/images/uploads"
 public_folder: "/images/uploads"
@@ -14,4 +15,5 @@ collections:
     create: true
     fields:
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
