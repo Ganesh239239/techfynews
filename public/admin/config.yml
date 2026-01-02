@@ -1,27 +1,27 @@
-# ============================
-# REQUIRED MEDIA CONFIG (FIX)
-# ============================
+# =====================================================
+# REQUIRED MEDIA SETTINGS (DO NOT REMOVE)
+# =====================================================
 media_folder: "src/assets/images"
 public_folder: "/images"
 
-# ============================
-# BASIC SETTINGS
-# ============================
+# =====================================================
+# BASIC CMS SETTINGS
+# =====================================================
 logo_url: https://bitdoze-astro-theme.pages.dev/logo.svg
 locale: en
-publish_mode: simple   # mobile-safe
+publish_mode: simple   # Mobile-safe (editorial workflow breaks mobile)
 
-# ============================
-# AUTHENTICATION (GITHUB)
-# ============================
+# =====================================================
+# AUTHENTICATION (GITHUB ONLY)
+# =====================================================
 backend:
   name: github
   repo: Ganesh239239/techfynews
   branch: main
 
-# ============================
+# =====================================================
 # COLLECTIONS
-# ============================
+# =====================================================
 collections:
   - name: "blog"
     label: "📝 Blog Posts"
@@ -30,26 +30,164 @@ collections:
     slug: "{{slug}}"
 
     editor:
-      preview: false   # mobile-safe
+      preview: false   # Critical for mobile stability
 
     fields:
-      # CORE
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description", name: "description", widget: "text" }
-      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
-      - { label: "Author", name: "author", widget: "string", default: "Admin" }
-      - { label: "Hero Image", name: "heroImage", widget: "image", required: false }
-      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      # =================================================
+      # CORE POST DATA
+      # =================================================
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        hint: "Main post title (H1)"
 
-      # SEO (CMS ONLY)
-      - label: "SEO Settings"
+      - label: "Short Description / Excerpt"
+        name: "description"
+        widget: "text"
+        hint: "Used for homepage, SEO, and previews"
+
+      - label: "Publish Date"
+        name: "pubDate"
+        widget: "datetime"
+
+      - label: "Author"
+        name: "author"
+        widget: "string"
+        default: "Admin"
+
+      - label: "Featured Image"
+        name: "heroImage"
+        widget: "image"
+        required: false
+
+      - label: "Draft Mode"
+        name: "draft"
+        widget: "boolean"
+        default: false
+        hint: "Enable to hide post from build"
+
+      # =================================================
+      # CONTENT CLASSIFICATION (SEO + UX)
+      # =================================================
+      - label: "Categories"
+        name: "categories"
+        widget: "list"
+        required: false
+        hint: "Primary topics for the article"
+
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        required: false
+        hint: "Secondary keywords / topics"
+
+      # =================================================
+      # ADVANCED SEO PANEL (RANK MATH STYLE)
+      # =================================================
+      - label: "🔍 SEO Settings"
         name: "seo"
         widget: "object"
         collapsed: false
         fields:
-          - { label: "SEO Title", name: "title", widget: "string", required: false }
-          - { label: "Meta Description", name: "description", widget: "text", required: false }
-          - { label: "Focus Keyword", name: "keyword", widget: "string", required: false }
+          - label: "SEO Title"
+            name: "title"
+            widget: "string"
+            required: false
+            hint: "Overrides browser & Google title"
 
-      # CONTENT
-      - { label: "Content", name: "body", widget: "markdown" }
+          - label: "Meta Description"
+            name: "description"
+            widget: "text"
+            required: false
+            hint: "Recommended: 150–160 characters"
+
+          - label: "Focus Keyword"
+            name: "keyword"
+            widget: "string"
+            required: false
+            hint: "For your SEO planning only"
+
+          - label: "Canonical URL"
+            name: "canonical"
+            widget: "string"
+            required: false
+            hint: "Use only if content is duplicated"
+
+          - label: "Noindex"
+            name: "noindex"
+            widget: "boolean"
+            default: false
+            hint: "Prevent indexing by search engines"
+
+          - label: "Nofollow Links"
+            name: "nofollow"
+            widget: "boolean"
+            default: false
+            hint: "Add nofollow to outbound links"
+
+      # =================================================
+      # SOCIAL / OPEN GRAPH (CMS-ONLY)
+      # =================================================
+      - label: "📣 Social Sharing"
+        name: "social"
+        widget: "object"
+        collapsed: true
+        fields:
+          - label: "OG Title"
+            name: "og_title"
+            widget: "string"
+            required: false
+
+          - label: "OG Description"
+            name: "og_description"
+            widget: "text"
+            required: false
+
+          - label: "OG Image"
+            name: "og_image"
+            widget: "image"
+            required: false
+
+      # =================================================
+      # SCHEMA / STRUCTURED DATA CONTROLS
+      # =================================================
+      - label: "🧩 Schema Settings"
+        name: "schema"
+        widget: "object"
+        collapsed: true
+        fields:
+          - label: "Article Type"
+            name: "type"
+            widget: "select"
+            options:
+              - "BlogPosting"
+              - "Article"
+              - "NewsArticle"
+            default: "BlogPosting"
+
+          - label: "Enable FAQ Schema"
+            name: "faq"
+            widget: "boolean"
+            default: false
+
+      # =================================================
+      # CONTENT QUALITY & EDITOR TOOLS (CMS-ONLY)
+      # =================================================
+      - label: "⏱ Estimated Read Time (minutes)"
+        name: "read_time"
+        widget: "number"
+        required: false
+        hint: "Optional manual override"
+
+      - label: "🧠 Editor Notes (Private)"
+        name: "editor_notes"
+        widget: "text"
+        required: false
+        hint: "SEO ideas, internal links, reminders (NOT published)"
+
+      # =================================================
+      # MAIN CONTENT
+      # =================================================
+      - label: "Content"
+        name: "body"
+        widget: "markdown"
