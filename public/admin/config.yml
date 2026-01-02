@@ -1,11 +1,9 @@
 # ==========================================
-# DECAP CMS - FULL FEATURED CONFIGURATION
+# BITDOZE THEME + ADVANCED SEO
 # ==========================================
 
-# Editorial Workflow (Draft → Review → Publish)
 publish_mode: editorial_workflow
 
-# Backend Configuration
 backend:
   name: github
   repo: Ganesh239239/techfynews
@@ -18,58 +16,33 @@ backend:
     delete: 'Delete {{collection}} "{{slug}}"'
     uploadMedia: 'Upload "{{path}}"'
     deleteMedia: 'Delete "{{path}}"'
-    openAuthoring: '{{message}}'
 
-# Media Configuration with auto-organization
+# BitDoze media paths
 media_folder: "src/assets/images/{{year}}/{{month}}"
-public_folder: "/images/{{year}}/{{month}}"
+public_folder: "/src/assets/images/{{year}}/{{month}}"
 
-# Media Library
-media_library:
-  name: uploadcare
-  config:
-    publicKey: demopublickey
-    multiple: false
-    tabs: 'file url'
-
-# Editor Settings
 editor:
   preview: true
 
-# Site Configuration
 site_url: https://techfynews.pages.dev
 display_url: https://techfynews.pages.dev
-logo_url: https://techfynews.pages.dev/logo.svg
 
-# Localization
-locale: 'en'
-
-# Slug Configuration
-slug:
-  encoding: "ascii"
-  clean_accents: true
-  sanitize_replacement: "-"
-
-# Collections
 collections:
-  # ==================
-  # BLOG POSTS
-  # ==================
+  # ==========================================
+  # BLOG POSTS (BitDoze Compatible + SEO)
+  # ==========================================
   - name: "blog"
     label: "📝 Blog Posts"
-    label_singular: "Blog Post"
-    description: "Manage your blog posts with full SEO control"
     folder: "src/content/blog"
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
     preview_path: "blog/{{slug}}"
     
     # Sorting and filtering
-    sortable_fields: ['pubDate', 'title', 'author', 'featured']
+    sortable_fields: ['publishDate', 'title', 'author']
     sort_direction: 'Descending'
-    summary: "{{title}} • {{pubDate | date('MMM DD, YYYY')}} • {{author}}"
+    summary: "{{title}} • {{publishDate | date('MMM DD, YYYY')}}"
     
-    # View filters
     view_filters:
       - label: "📝 Drafts"
         field: draft
@@ -80,127 +53,95 @@ collections:
       - label: "⭐ Featured"
         field: featured
         pattern: true
-      - label: "🔒 Private"
-        field: seo.noindex
-        pattern: true
     
-    # View groups
     view_groups:
-      - label: "📅 Year"
-        field: pubDate
+      - label: "Year"
+        field: publishDate
         pattern: d{4}
-      - label: "👤 Author"
+      - label: "Category"
+        field: category
+      - label: "Author"
         field: author
-      - label: "📂 Category"
-        field: categories
     
     fields:
-      # === BASIC CONTENT ===
+      # === BitDoze Native Fields ===
       - label: "📌 Title"
         name: "title"
         widget: "string"
         required: true
-        hint: "Post title (50-60 characters for SEO)"
-        pattern: ['.{10,100}', "Title should be 10-100 characters"]
+        hint: "Post title (50-60 characters for best SEO)"
         
-      - label: "📄 Description"
-        name: "description"
+      - label: "📄 Excerpt"
+        name: "excerpt"
         widget: "text"
         required: true
-        hint: "Meta description for SEO (155-160 characters)"
-        pattern: ['.{50,160}', "Must be 50-160 characters for optimal SEO"]
+        hint: "Short description (155-160 characters for meta description)"
+        pattern: ['.{50,160}', "Should be 50-160 characters"]
         
       - label: "📅 Publish Date"
-        name: "pubDate"
+        name: "publishDate"
         widget: "datetime"
         required: true
         default: ""
         date_format: "YYYY-MM-DD"
-        time_format: "HH:mm"
-        format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
-        picker_utc: false
+        time_format: false
+        format: "YYYY-MM-DD"
         
-      - label: "🔄 Updated Date"
-        name: "updatedDate"
-        widget: "datetime"
-        required: false
-        date_format: "YYYY-MM-DD"
-        time_format: "HH:mm"
-        hint: "Leave empty for auto-update"
+      - label: "🖼️ Featured Image"
+        name: "image"
+        widget: "object"
+        required: true
+        fields:
+          - label: "Image File"
+            name: "src"
+            widget: "image"
+            required: true
+            hint: "Recommended: 1200x630px for social sharing"
+          - label: "Alt Text"
+            name: "alt"
+            widget: "string"
+            required: true
+            hint: "Describe image for accessibility & SEO"
+        
+      - label: "📂 Category"
+        name: "category"
+        widget: "string"
+        required: true
+        hint: "Primary category for this post"
         
       - label: "✍️ Author"
         name: "author"
-        widget: "relation"
-        collection: "authors"
-        search_fields: ["name", "title"]
-        value_field: "{{slug}}"
-        display_fields: ["name", "title"]
-        required: true
-        hint: "Select the post author"
-        
-      - label: "🖼️ Featured Image"
-        name: "heroImage"
-        widget: "image"
-        required: true
-        hint: "Recommended: 1200x630px for social media sharing"
-        media_library:
-          config:
-            multiple: false
-            max_file_size: 5120000
-        
-      - label: "🏷️ Image Alt Text"
-        name: "heroImageAlt"
         widget: "string"
-        required: false
-        hint: "Describe the image (accessibility & SEO)"
-        
-      - label: "⭐ Featured Post"
-        name: "featured"
-        widget: "boolean"
-        default: false
-        hint: "Display prominently on homepage"
-        
-      - label: "📝 Draft Status"
-        name: "draft"
-        widget: "boolean"
-        default: false
-        hint: "Hide from production (unpublished)"
-        
-      - label: "📂 Categories"
-        name: "categories"
-        widget: "list"
-        allow_add: true
         required: true
-        min: 1
-        max: 3
-        hint: "Add 1-3 categories (press Enter after each)"
-        field:
-          label: Category
-          name: category
-          widget: string
+        default: "Admin"
         
       - label: "🏷️ Tags"
         name: "tags"
         widget: "list"
-        allow_add: true
+        required: true
+        min: 1
+        max: 10
+        hint: "Add relevant tags (1-10 tags)"
+        
+      - label: "📝 Draft"
+        name: "draft"
+        widget: "boolean"
+        default: false
+        hint: "Hide from production site"
+        
+      # === Additional Fields ===
+      - label: "⭐ Featured Post"
+        name: "featured"
+        widget: "boolean"
+        default: false
         required: false
-        hint: "Add relevant tags for discoverability"
-        field:
-          label: Tag
-          name: tag
-          widget: string
+        hint: "Show prominently on homepage"
         
       - label: "📚 Series"
         name: "series"
         widget: "string"
         required: false
-        hint: "Group related posts (e.g., 'Astro Tutorial')"
-        
-      - label: "📑 Table of Contents"
-        name: "toc"
-        widget: "boolean"
-        default: true
-        hint: "Auto-generate TOC from headings"
+        hint: "Group related posts together"
         
       - label: "⏱️ Reading Time"
         name: "readingTime"
@@ -208,100 +149,79 @@ collections:
         required: false
         value_type: "int"
         min: 1
-        max: 120
         hint: "Minutes (auto-calculated if empty)"
         
-      - label: "💬 Enable Comments"
-        name: "comments"
-        widget: "boolean"
-        default: true
-        hint: "Allow reader comments"
-        
-      # === MAIN CONTENT ===
       - label: "📝 Post Content"
         name: "body"
         widget: "markdown"
         required: true
-        hint: "Write your post content using Markdown"
-        modes: ['raw', 'rich_text']
+        hint: "Main post content in Markdown"
         
-      # === SEO SETTINGS ===
-      - label: "🔍 SEO Settings"
+      # === Advanced SEO (Beyond BitDoze defaults) ===
+      - label: "🔍 Advanced SEO"
         name: "seo"
         widget: "object"
         collapsed: true
-        summary: "SEO: {{fields.title}} ({{fields.focusKeyword}})"
-        hint: "Advanced SEO configuration"
+        required: false
+        summary: "SEO: {{fields.focusKeyword}}"
         fields:
-          - label: "SEO Title"
-            name: "title"
-            widget: "string"
-            required: false
-            hint: "Override default title (50-60 chars)"
-            pattern: ['.{0,60}', "Max 60 characters"]
-            
-          - label: "Meta Description"
-            name: "description"
-            widget: "text"
-            required: false
-            hint: "Override default description (155-160 chars)"
-            pattern: ['.{0,160}', "Max 160 characters"]
-            
-          - label: "Focus Keyword"
+          - label: "🎯 Focus Keyword"
             name: "focusKeyword"
             widget: "string"
             required: false
-            hint: "Primary keyword (e.g., 'web development')"
+            hint: "Primary keyword to optimize for (e.g., 'web development')"
             
-          - label: "Additional Keywords"
+          - label: "🔑 Additional Keywords"
             name: "keywords"
             widget: "list"
-            allow_add: true
             required: false
             hint: "Secondary keywords for SEO"
             
-          - label: "Canonical URL"
+          - label: "📝 Custom Meta Title"
+            name: "metaTitle"
+            widget: "string"
+            required: false
+            hint: "Override title for search engines (50-60 chars)"
+            pattern: ['.{0,60}', "Max 60 characters"]
+            
+          - label: "📄 Custom Meta Description"
+            name: "metaDescription"
+            widget: "text"
+            required: false
+            hint: "Override excerpt for meta description (155-160 chars)"
+            pattern: ['.{0,160}', "Max 160 characters"]
+            
+          - label: "🔗 Canonical URL"
             name: "canonical"
             widget: "string"
             required: false
-            hint: "Prevent duplicate content (if republished)"
+            hint: "Prevent duplicate content (if republished from another site)"
             
           - label: "🚫 No Index"
             name: "noindex"
             widget: "boolean"
             default: false
-            hint: "Hide from search engines"
+            hint: "Hide this post from search engines"
             
           - label: "🔗 No Follow"
             name: "nofollow"
             widget: "boolean"
             default: false
-            hint: "Don't follow links in post"
-            
-          - label: "Meta Robots"
-            name: "robots"
-            widget: "select"
-            options:
-              - {label: "Index, Follow", value: "index, follow"}
-              - {label: "No Index, Follow", value: "noindex, follow"}
-              - {label: "Index, No Follow", value: "index, nofollow"}
-              - {label: "No Index, No Follow", value: "noindex, nofollow"}
-            default: "index, follow"
-            required: false
+            hint: "Don't follow links in this post"
         
-      # === OPEN GRAPH (Facebook, LinkedIn) ===
-      - label: "📱 Social Media (Open Graph)"
+      # === Open Graph (Enhanced Social Sharing) ===
+      - label: "📱 Open Graph (Social Media)"
         name: "og"
         widget: "object"
         collapsed: true
-        summary: "OG: {{fields.title}}"
-        hint: "Facebook, LinkedIn, Discord sharing"
+        required: false
+        summary: "Social: {{fields.title}}"
         fields:
           - label: "OG Title"
             name: "title"
             widget: "string"
             required: false
-            hint: "Custom title for social media"
+            hint: "Custom title for Facebook/LinkedIn (leave empty to use post title)"
             
           - label: "OG Description"
             name: "description"
@@ -313,31 +233,35 @@ collections:
             name: "image"
             widget: "image"
             required: false
-            hint: "1200x630px recommended"
+            hint: "Custom image for social sharing (1200x630px ideal)"
             
           - label: "OG Type"
             name: "type"
             widget: "select"
-            options: ["article", "website", "blog"]
+            options: ["article", "website"]
             default: "article"
-            
-          - label: "OG Locale"
-            name: "locale"
-            widget: "string"
-            default: "en_US"
             required: false
         
-      # === TWITTER CARD ===
+      # === Twitter Card ===
       - label: "🐦 Twitter Card"
         name: "twitter"
         widget: "object"
         collapsed: true
-        summary: "Twitter: {{fields.card}}"
+        required: false
         fields:
+          - label: "Card Type"
+            name: "card"
+            widget: "select"
+            options:
+              - {label: "Large Image", value: "summary_large_image"}
+              - {label: "Summary", value: "summary"}
+            default: "summary_large_image"
+            
           - label: "Twitter Title"
             name: "title"
             widget: "string"
             required: false
+            hint: "Custom title for Twitter"
             
           - label: "Twitter Description"
             name: "description"
@@ -348,36 +272,20 @@ collections:
             name: "image"
             widget: "image"
             required: false
-            hint: "2:1 ratio (1200x600px)"
+            hint: "Custom image for Twitter (2:1 ratio)"
             
-          - label: "Card Type"
-            name: "card"
-            widget: "select"
-            options:
-              - {label: "Summary", value: "summary"}
-              - {label: "Large Image", value: "summary_large_image"}
-              - {label: "Player", value: "player"}
-            default: "summary_large_image"
-            
-          - label: "Twitter Site"
-            name: "site"
-            widget: "string"
-            required: false
-            hint: "@username of website"
-            
-          - label: "Twitter Creator"
+          - label: "Creator Handle"
             name: "creator"
             widget: "string"
             required: false
-            hint: "@username of content creator"
+            hint: "Twitter @username of content creator"
         
-      # === SCHEMA.ORG ===
-      - label: "📊 Schema (Structured Data)"
+      # === Schema.org Structured Data ===
+      - label: "📊 Schema Markup"
         name: "schema"
         widget: "object"
         collapsed: true
-        summary: "Schema: {{fields.type}}"
-        hint: "Google Rich Snippets"
+        required: false
         fields:
           - label: "Article Type"
             name: "type"
@@ -385,9 +293,8 @@ collections:
             options:
               - {label: "Blog Post", value: "BlogPosting"}
               - {label: "News Article", value: "NewsArticle"}
-              - {label: "Article", value: "Article"}
               - {label: "Tech Article", value: "TechArticle"}
-              - {label: "How-To", value: "HowTo"}
+              - {label: "How-To Guide", value: "HowTo"}
               - {label: "Review", value: "Review"}
             default: "BlogPosting"
             
@@ -395,112 +302,66 @@ collections:
             name: "articleSection"
             widget: "string"
             required: false
-            hint: "e.g., Technology, Business"
+            hint: "e.g., Technology, Business, Tutorials"
             
           - label: "Word Count"
             name: "wordCount"
             widget: "number"
             required: false
-            hint: "Auto-calculated if empty"
-      
-      # === ADVANCED ===
-      - label: "⚙️ Advanced Options"
-        name: "advanced"
-        widget: "object"
-        collapsed: true
-        fields:
-          - label: "Custom CSS Classes"
-            name: "cssClass"
-            widget: "string"
-            required: false
-            
-          - label: "Custom Template"
-            name: "layout"
-            widget: "select"
-            options: ["default", "minimal", "wide"]
-            default: "default"
-            required: false
-            
-          - label: "Redirect From"
-            name: "redirectFrom"
-            widget: "list"
-            required: false
-            hint: "Old URLs to redirect from"
-            
-          - label: "Related Posts"
-            name: "relatedPosts"
-            widget: "relation"
-            collection: "blog"
-            search_fields: ["title"]
-            value_field: "{{slug}}"
-            display_fields: ["title"]
-            multiple: true
-            required: false
-            max: 5
+            hint: "Total words (auto-calculated if empty)"
 
-  # ==================
+  # ==========================================
   # AUTHORS
-  # ==================
+  # ==========================================
   - name: "authors"
     label: "👤 Authors"
-    label_singular: "Author"
     folder: "src/content/authors"
     create: true
     slug: "{{slug}}"
     identifier_field: "name"
-    summary: "{{name}} - {{title}}"
     fields:
       - {label: "👤 Name", name: "name", widget: "string", required: true}
       - {label: "💼 Job Title", name: "title", widget: "string", required: false}
-      - {label: "📧 Email", name: "email", widget: "string", required: false, pattern: ['^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$', "Must be valid email"]}
-      - {label: "📝 Bio", name: "bio", widget: "text", required: true, hint: "Short author biography (150 chars)"}
-      - {label: "🖼️ Avatar", name: "avatar", widget: "image", required: true, hint: "Square image (400x400px)"}
+      - {label: "📧 Email", name: "email", widget: "string", required: false}
+      - {label: "📝 Bio", name: "bio", widget: "text", required: true}
+      - {label: "🖼️ Avatar", name: "avatar", widget: "image", required: true}
       - {label: "🌐 Website", name: "website", widget: "string", required: false}
-      - {label: "📍 Location", name: "location", widget: "string", required: false}
       
       - label: "🔗 Social Links"
         name: "social"
         widget: "object"
-        collapsed: false
         fields:
-          - {label: "Twitter/X", name: "twitter", widget: "string", required: false, hint: "Username without @"}
+          - {label: "Twitter", name: "twitter", widget: "string", required: false, hint: "Username without @"}
           - {label: "GitHub", name: "github", widget: "string", required: false}
           - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
           - {label: "Instagram", name: "instagram", widget: "string", required: false}
-          - {label: "YouTube", name: "youtube", widget: "string", required: false}
-          - {label: "Facebook", name: "facebook", widget: "string", required: false}
 
-  # ==================
+  # ==========================================
   # CATEGORIES
-  # ==================
+  # ==========================================
   - name: "categories"
     label: "📂 Categories"
-    label_singular: "Category"
     folder: "src/content/categories"
     create: true
     slug: "{{slug}}"
-    identifier_field: "name"
     fields:
       - {label: "📛 Name", name: "name", widget: "string", required: true}
       - {label: "📝 Description", name: "description", widget: "text", required: true}
-      - {label: "🎨 Icon", name: "icon", widget: "image", required: false}
-      - {label: "🎨 Color", name: "color", widget: "color", required: false, allowInput: true}
-      - {label: "⭐ Featured", name: "featured", widget: "boolean", default: false}
-      - {label: "🔢 Order", name: "order", widget: "number", value_type: "int", required: false}
+      - {label: "🎨 Color", name: "color", widget: "color", required: false}
+      - {label: "🔢 Order", name: "order", widget: "number", required: false}
 
-  # ==================
+  # ==========================================
   # PAGES
-  # ==================
+  # ==========================================
   - name: "pages"
     label: "📄 Pages"
-    label_singular: "Page"
     folder: "src/content/pages"
     create: true
     slug: "{{slug}}"
     fields:
       - {label: "📌 Title", name: "title", widget: "string", required: true}
       - {label: "📄 Description", name: "description", widget: "text", required: true}
-      - {label: "📅 Publish Date", name: "pubDate", widget: "datetime", required: true}
+      - {label: "📅 Date", name: "publishDate", widget: "datetime"}
       - {label: "📝 Content", name: "body", widget: "markdown", required: true}
       
       - label: "🔍 SEO"
@@ -508,27 +369,24 @@ collections:
         widget: "object"
         collapsed: true
         fields:
-          - {label: "SEO Title", name: "title", widget: "string", required: false}
+          - {label: "Meta Title", name: "title", widget: "string", required: false}
           - {label: "Meta Description", name: "description", widget: "text", required: false}
           - {label: "No Index", name: "noindex", widget: "boolean", default: false}
 
-  # ==================
+  # ==========================================
   # SITE SETTINGS
-  # ==================
+  # ==========================================
   - name: "settings"
-    label: "⚙️ Site Settings"
+    label: "⚙️ Settings"
     files:
-      - label: "🌐 General Settings"
-        name: "general"
+      - label: "Site Configuration"
+        name: "site"
         file: "src/config/site.json"
         fields:
           - {label: "Site Title", name: "title", widget: "string"}
           - {label: "Site Description", name: "description", widget: "text"}
-          - {label: "Site URL", name: "url", widget: "string"}
-          - {label: "Logo", name: "logo", widget: "image"}
-          - {label: "Favicon", name: "favicon", widget: "image"}
+          - {label: "Site URL", name: "url", widget: "string", hint: "https://techfynews.pages.dev"}
           - {label: "Language", name: "lang", widget: "string", default: "en"}
-          - {label: "Posts Per Page", name: "postsPerPage", widget: "number", default: 12, value_type: "int"}
           
           - label: "Social Media"
             name: "social"
@@ -538,37 +396,17 @@ collections:
               - {label: "Facebook", name: "facebook", widget: "string", required: false}
               - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
               - {label: "GitHub", name: "github", widget: "string", required: false}
-              - {label: "YouTube", name: "youtube", widget: "string", required: false}
-              - {label: "Instagram", name: "instagram", widget: "string", required: false}
           
           - label: "SEO Defaults"
             name: "seoDefaults"
             widget: "object"
             fields:
               - {label: "Default OG Image", name: "ogImage", widget: "image"}
-              - {label: "Twitter Handle", name: "twitterHandle", widget: "string"}
+              - {label: "Twitter Site", name: "twitterSite", widget: "string", hint: "@username"}
           
           - label: "Analytics"
             name: "analytics"
             widget: "object"
             fields:
-              - {label: "Google Analytics", name: "googleAnalytics", widget: "string", required: false}
+              - {label: "Google Analytics", name: "googleAnalytics", widget: "string", required: false, hint: "G-XXXXXXXXXX"}
               - {label: "Google Tag Manager", name: "gtm", widget: "string", required: false}
-              - {label: "Facebook Pixel", name: "facebookPixel", widget: "string", required: false}
-      
-      - label: "🎨 Theme Settings"
-        name: "theme"
-        file: "src/config/theme.json"
-        fields:
-          - label: "Primary Color"
-            name: "primaryColor"
-            widget: "color"
-            allowInput: true
-          - label: "Secondary Color"
-            name: "secondaryColor"
-            widget: "color"
-            allowInput: true
-          - label: "Font Family"
-            name: "fontFamily"
-            widget: "select"
-            options: ["Inter", "Roboto", "Poppins", "Open Sans"]
