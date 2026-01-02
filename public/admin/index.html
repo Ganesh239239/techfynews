@@ -4,11 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#3b82f6" />
   <title>Content Manager - TechFy News</title>
   <link rel="icon" href="/favicon.svg" />
   
   <style>
-    /* Mobile-First Responsive Design */
+    /* ==========================================
+       BASE RESET
+       ========================================== */
     *, *::before, *::after {
       box-sizing: border-box !important;
     }
@@ -19,15 +22,27 @@
       overflow-x: hidden !important;
       width: 100vw !important;
       max-width: 100vw !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     
-    /* Mobile Optimizations */
+    #nc-root {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+    
+    /* ==========================================
+       MOBILE RESPONSIVE (< 768px)
+       ========================================== */
     @media (max-width: 768px) {
+      /* Force mobile layout */
       [class*="AppMainContainer"] {
         flex-direction: column !important;
         width: 100vw !important;
+        max-width: 100vw !important;
       }
       
+      /* Hide sidebar on mobile */
       [class*="Sidebar"] {
         position: fixed !important;
         left: -100% !important;
@@ -36,57 +51,271 @@
         height: 100vh !important;
         z-index: 9999 !important;
         transition: left 0.3s ease !important;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2) !important;
       }
       
+      /* Main content full width */
       [class*="MainView"] {
         width: 100vw !important;
         max-width: 100vw !important;
+        margin: 0 !important;
         padding: 10px !important;
       }
       
+      /* Top bar */
+      [class*="TopBar"] {
+        flex-wrap: wrap !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+      }
+      
+      /* Workflow - stack columns */
       [class*="WorkflowList"] {
+        display: flex !important;
         flex-direction: column !important;
+        gap: 20px !important;
       }
       
       [class*="WorkflowColumn"] {
         width: 100% !important;
-        margin-bottom: 20px !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
       }
       
+      /* Collection cards */
+      [class*="ListCard"],
+      [class*="EntryCard"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 8px 0 !important;
+      }
+      
+      /* Editor - stack not split */
       [class*="SplitPane"] {
         flex-direction: column !important;
       }
       
-      input, textarea, select {
-        font-size: 16px !important;
+      [class*="EditorContainer"],
+      [class*="PreviewPane"] {
         width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
       }
       
-      button {
+      /* Widgets */
+      [class*="ControlContainer"],
+      [class*="WidgetControl"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 8px !important;
+      }
+      
+      /* Form inputs */
+      input[type="text"],
+      input[type="email"],
+      input[type="url"],
+      input[type="number"],
+      textarea,
+      select {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 16px !important;
+        padding: 10px !important;
+      }
+      
+      /* Markdown editor */
+      [class*="RawEditor"],
+      [class*="VisualEditor"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 14px !important;
+      }
+      
+      /* Object & List widgets */
+      [class*="ObjectControl"],
+      [class*="ListControl"] {
+        width: 100% !important;
+        padding: 12px !important;
+      }
+      
+      /* Touch-friendly buttons */
+      button,
+      [class*="Button"] {
         min-height: 44px !important;
-        padding: 10px 15px !important;
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+      }
+      
+      /* Modals */
+      [class*="Modal"],
+      [class*="ModalBody"] {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        margin: 2.5vw auto !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+      }
+      
+      /* Images */
+      [class*="ImagePreview"] img {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      
+      /* Dropdowns */
+      [class*="Dropdown"],
+      [class*="Select"] {
+        max-width: 100% !important;
+      }
+      
+      /* Toolbar */
+      [class*="Toolbar"] {
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+      }
+      
+      /* Preview pane */
+      [class*="PreviewPaneFrame"] {
+        width: 100% !important;
+        min-height: 400px !important;
       }
     }
     
-    /* Prevent overflow */
-    body, #nc-root {
+    /* ==========================================
+       TABLET (768px - 1024px)
+       ========================================== */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      [class*="Sidebar"] {
+        width: 220px !important;
+        min-width: 220px !important;
+      }
+      
+      [class*="MainView"] {
+        padding: 20px !important;
+      }
+    }
+    
+    /* ==========================================
+       DESKTOP (> 1024px)
+       ========================================== */
+    @media (min-width: 1025px) {
+      [class*="MainView"] {
+        padding: 30px !important;
+      }
+      
+      [class*="EditorContainer"] {
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+      }
+    }
+    
+    /* ==========================================
+       GENERAL FIXES
+       ========================================== */
+    
+    /* Prevent horizontal scroll */
+    body, html, #nc-root, [class*="App"] {
       overflow-x: hidden !important;
       max-width: 100vw !important;
+    }
+    
+    /* Z-index hierarchy */
+    [class*="TopBar"] { z-index: 100 !important; }
+    [class*="Dropdown"] { z-index: 200 !important; }
+    [class*="Modal"] { z-index: 1000 !important; }
+    [class*="Sidebar"] { z-index: 50 !important; }
+    
+    /* Field spacing */
+    [class*="FieldWrapper"] {
+      margin-bottom: 20px !important;
+    }
+    
+    /* Loading */
+    [class*="Loader"] {
+      padding: 20px !important;
+    }
+    
+    /* Error/Success messages */
+    [class*="ErrorMessage"],
+    [class*="SuccessMessage"] {
+      padding: 12px !important;
+      margin: 10px 0 !important;
+      border-radius: 4px !important;
+    }
+    
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px !important;
+      height: 8px !important;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1 !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #888 !important;
+      border-radius: 4px !important;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555 !important;
     }
   </style>
 </head>
 <body>
+  <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   
+  <!-- Initialization Script -->
   <script>
-    console.log('🚀 BitDoze Theme + Advanced SEO CMS');
-    console.log('✅ Mobile Optimized | 📱 Responsive | 🔍 Full SEO Control');
-    
-    const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) {
-      console.log('📱 Mobile device detected');
-      document.body.classList.add('cms-mobile');
-    }
+    (function() {
+      'use strict';
+      
+      console.log('🚀 TechFy News CMS - Full Featured');
+      console.log('📱 Mobile Optimized');
+      console.log('🔍 Advanced SEO');
+      console.log('⚡ Editorial Workflow');
+      
+      // Device detection
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isTablet = /(ipad|tablet|(android(?!.*mobile)))/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        console.log('📱 Mobile device detected');
+        document.body.classList.add('cms-mobile');
+      } else if (isTablet) {
+        console.log('📱 Tablet device detected');
+        document.body.classList.add('cms-tablet');
+      } else {
+        console.log('💻 Desktop device detected');
+        document.body.classList.add('cms-desktop');
+      }
+      
+      // Fix viewport on orientation change
+      window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+          window.scrollTo(0, 0);
+        }, 200);
+      });
+      
+      // Prevent iOS zoom
+      if (isMobile) {
+        document.addEventListener('touchstart', function() {}, {passive: true});
+      }
+      
+      // CMS loaded
+      window.addEventListener('load', function() {
+        console.log('✅ CMS loaded successfully');
+      });
+      
+      // Error handling
+      window.addEventListener('error', function(e) {
+        console.error('❌ Error:', e.message);
+      });
+      
+      console.log('✨ All systems ready');
+    })();
   </script>
 </body>
 </html>
