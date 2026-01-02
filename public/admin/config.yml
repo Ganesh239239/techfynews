@@ -1,236 +1,574 @@
-# =====================================================
-# REQUIRED (SCHEMA VALIDATION)
-# =====================================================
-media_folder: "src/assets/images"
-public_folder: "/images"
+# ==========================================
+# DECAP CMS - FULL FEATURED CONFIGURATION
+# ==========================================
 
-# =====================================================
-# BASIC CMS SETTINGS
-# =====================================================
-logo_url: https://bitdoze-astro-theme.pages.dev/logo.svg
-locale: en
-publish_mode: simple   # REQUIRED for mobile stability
+# Editorial Workflow (Draft → Review → Publish)
+publish_mode: editorial_workflow
 
-# =====================================================
-# AUTHENTICATION
-# =====================================================
+# Backend Configuration
 backend:
   name: github
   repo: Ganesh239239/techfynews
   branch: main
+  base_url: https://techfynews.pages.dev
+  auth_endpoint: /api/auth
+  commit_messages:
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
+    openAuthoring: '{{message}}'
 
-# =====================================================
-# COLLECTIONS
-# =====================================================
+# Media Configuration with auto-organization
+media_folder: "src/assets/images/{{year}}/{{month}}"
+public_folder: "/images/{{year}}/{{month}}"
+
+# Media Library
+media_library:
+  name: uploadcare
+  config:
+    publicKey: demopublickey
+    multiple: false
+    tabs: 'file url'
+
+# Editor Settings
+editor:
+  preview: true
+
+# Site Configuration
+site_url: https://techfynews.pages.dev
+display_url: https://techfynews.pages.dev
+logo_url: https://techfynews.pages.dev/logo.svg
+
+# Localization
+locale: 'en'
+
+# Slug Configuration
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+# Collections
 collections:
+  # ==================
+  # BLOG POSTS
+  # ==================
   - name: "blog"
     label: "📝 Blog Posts"
+    label_singular: "Blog Post"
+    description: "Manage your blog posts with full SEO control"
     folder: "src/content/blog"
     create: true
-    slug: "{{slug}}"
-
-    editor:
-      preview: false   # REQUIRED for responsive/mobile CMS
-
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: "blog/{{slug}}"
+    
+    # Sorting and filtering
+    sortable_fields: ['pubDate', 'title', 'author', 'featured']
+    sort_direction: 'Descending'
+    summary: "{{title}} • {{pubDate | date('MMM DD, YYYY')}} • {{author}}"
+    
+    # View filters
+    view_filters:
+      - label: "📝 Drafts"
+        field: draft
+        pattern: true
+      - label: "✅ Published"
+        field: draft
+        pattern: false
+      - label: "⭐ Featured"
+        field: featured
+        pattern: true
+      - label: "🔒 Private"
+        field: seo.noindex
+        pattern: true
+    
+    # View groups
+    view_groups:
+      - label: "📅 Year"
+        field: pubDate
+        pattern: d{4}
+      - label: "👤 Author"
+        field: author
+      - label: "📂 Category"
+        field: categories
+    
     fields:
-      # =================================================
-      # CORE CONTENT
-      # =================================================
-      - label: "Post Title"
+      # === BASIC CONTENT ===
+      - label: "📌 Title"
         name: "title"
         widget: "string"
-        hint: "Main H1 title"
-
-      - label: "Excerpt / Description"
+        required: true
+        hint: "Post title (50-60 characters for SEO)"
+        pattern: ['.{10,100}', "Title should be 10-100 characters"]
+        
+      - label: "📄 Description"
         name: "description"
         widget: "text"
-        hint: "Used for homepage + SEO fallback"
-
-      - label: "Publish Date"
+        required: true
+        hint: "Meta description for SEO (155-160 characters)"
+        pattern: ['.{50,160}', "Must be 50-160 characters for optimal SEO"]
+        
+      - label: "📅 Publish Date"
         name: "pubDate"
         widget: "datetime"
-
-      - label: "Author"
+        required: true
+        default: ""
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
+        picker_utc: false
+        
+      - label: "🔄 Updated Date"
+        name: "updatedDate"
+        widget: "datetime"
+        required: false
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        hint: "Leave empty for auto-update"
+        
+      - label: "✍️ Author"
         name: "author"
-        widget: "string"
-        default: "Admin"
-
-      - label: "Featured Image"
+        widget: "relation"
+        collection: "authors"
+        search_fields: ["name", "title"]
+        value_field: "{{slug}}"
+        display_fields: ["name", "title"]
+        required: true
+        hint: "Select the post author"
+        
+      - label: "🖼️ Featured Image"
         name: "heroImage"
         widget: "image"
+        required: true
+        hint: "Recommended: 1200x630px for social media sharing"
+        media_library:
+          config:
+            multiple: false
+            max_file_size: 5120000
+        
+      - label: "🏷️ Image Alt Text"
+        name: "heroImageAlt"
+        widget: "string"
         required: false
-
-      - label: "Draft Mode"
+        hint: "Describe the image (accessibility & SEO)"
+        
+      - label: "⭐ Featured Post"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        hint: "Display prominently on homepage"
+        
+      - label: "📝 Draft Status"
         name: "draft"
         widget: "boolean"
         default: false
-
-      # =================================================
-      # TAXONOMY (RANK MATH EQUIVALENT)
-      # =================================================
-      - label: "Primary Category"
-        name: "primary_category"
-        widget: "string"
-        required: false
-
-      - label: "Categories"
+        hint: "Hide from production (unpublished)"
+        
+      - label: "📂 Categories"
         name: "categories"
         widget: "list"
-        required: false
-
-      - label: "Tags"
+        allow_add: true
+        required: true
+        min: 1
+        max: 3
+        hint: "Add 1-3 categories (press Enter after each)"
+        field:
+          label: Category
+          name: category
+          widget: string
+        
+      - label: "🏷️ Tags"
         name: "tags"
         widget: "list"
+        allow_add: true
         required: false
-
-      # =================================================
-      # 🔥 PREMIUM SEO PANEL (RANK MATH STYLE)
-      # =================================================
-      - label: "🔍 SEO (Advanced)"
+        hint: "Add relevant tags for discoverability"
+        field:
+          label: Tag
+          name: tag
+          widget: string
+        
+      - label: "📚 Series"
+        name: "series"
+        widget: "string"
+        required: false
+        hint: "Group related posts (e.g., 'Astro Tutorial')"
+        
+      - label: "📑 Table of Contents"
+        name: "toc"
+        widget: "boolean"
+        default: true
+        hint: "Auto-generate TOC from headings"
+        
+      - label: "⏱️ Reading Time"
+        name: "readingTime"
+        widget: "number"
+        required: false
+        value_type: "int"
+        min: 1
+        max: 120
+        hint: "Minutes (auto-calculated if empty)"
+        
+      - label: "💬 Enable Comments"
+        name: "comments"
+        widget: "boolean"
+        default: true
+        hint: "Allow reader comments"
+        
+      # === MAIN CONTENT ===
+      - label: "📝 Post Content"
+        name: "body"
+        widget: "markdown"
+        required: true
+        hint: "Write your post content using Markdown"
+        modes: ['raw', 'rich_text']
+        
+      # === SEO SETTINGS ===
+      - label: "🔍 SEO Settings"
         name: "seo"
         widget: "object"
-        collapsed: false
+        collapsed: true
+        summary: "SEO: {{fields.title}} ({{fields.focusKeyword}})"
+        hint: "Advanced SEO configuration"
         fields:
           - label: "SEO Title"
             name: "title"
             widget: "string"
             required: false
-            hint: "Overrides <title> tag"
-
+            hint: "Override default title (50-60 chars)"
+            pattern: ['.{0,60}', "Max 60 characters"]
+            
           - label: "Meta Description"
             name: "description"
             widget: "text"
             required: false
-            hint: "150–160 characters recommended"
-
+            hint: "Override default description (155-160 chars)"
+            pattern: ['.{0,160}', "Max 160 characters"]
+            
           - label: "Focus Keyword"
-            name: "focus_keyword"
+            name: "focusKeyword"
             widget: "string"
             required: false
-
-          - label: "Secondary Keywords"
-            name: "secondary_keywords"
+            hint: "Primary keyword (e.g., 'web development')"
+            
+          - label: "Additional Keywords"
+            name: "keywords"
             widget: "list"
+            allow_add: true
             required: false
-
+            hint: "Secondary keywords for SEO"
+            
           - label: "Canonical URL"
             name: "canonical"
             widget: "string"
             required: false
-
-          - label: "Indexing Control"
+            hint: "Prevent duplicate content (if republished)"
+            
+          - label: "🚫 No Index"
+            name: "noindex"
+            widget: "boolean"
+            default: false
+            hint: "Hide from search engines"
+            
+          - label: "🔗 No Follow"
+            name: "nofollow"
+            widget: "boolean"
+            default: false
+            hint: "Don't follow links in post"
+            
+          - label: "Meta Robots"
             name: "robots"
             widget: "select"
             options:
-              - "index, follow"
-              - "noindex, follow"
-              - "noindex, nofollow"
+              - {label: "Index, Follow", value: "index, follow"}
+              - {label: "No Index, Follow", value: "noindex, follow"}
+              - {label: "Index, No Follow", value: "index, nofollow"}
+              - {label: "No Index, No Follow", value: "noindex, nofollow"}
             default: "index, follow"
-
-          - label: "Breadcrumb Title Override"
-            name: "breadcrumb_title"
-            widget: "string"
             required: false
-
-      # =================================================
-      # SOCIAL PREVIEW (RANK MATH PRO)
-      # =================================================
-      - label: "📣 Social Preview"
-        name: "social"
+        
+      # === OPEN GRAPH (Facebook, LinkedIn) ===
+      - label: "📱 Social Media (Open Graph)"
+        name: "og"
         widget: "object"
         collapsed: true
+        summary: "OG: {{fields.title}}"
+        hint: "Facebook, LinkedIn, Discord sharing"
         fields:
           - label: "OG Title"
-            name: "og_title"
+            name: "title"
             widget: "string"
             required: false
-
+            hint: "Custom title for social media"
+            
           - label: "OG Description"
-            name: "og_description"
+            name: "description"
             widget: "text"
             required: false
-
+            hint: "Custom description for social shares"
+            
           - label: "OG Image"
-            name: "og_image"
+            name: "image"
             widget: "image"
             required: false
-
+            hint: "1200x630px recommended"
+            
+          - label: "OG Type"
+            name: "type"
+            widget: "select"
+            options: ["article", "website", "blog"]
+            default: "article"
+            
+          - label: "OG Locale"
+            name: "locale"
+            widget: "string"
+            default: "en_US"
+            required: false
+        
+      # === TWITTER CARD ===
+      - label: "🐦 Twitter Card"
+        name: "twitter"
+        widget: "object"
+        collapsed: true
+        summary: "Twitter: {{fields.card}}"
+        fields:
           - label: "Twitter Title"
-            name: "twitter_title"
+            name: "title"
             widget: "string"
             required: false
-
+            
           - label: "Twitter Description"
-            name: "twitter_description"
+            name: "description"
             widget: "text"
             required: false
-
+            
           - label: "Twitter Image"
-            name: "twitter_image"
+            name: "image"
             widget: "image"
             required: false
-
-      # =================================================
-      # STRUCTURED DATA (SCHEMA PRO)
-      # =================================================
-      - label: "🧩 Schema (Advanced)"
+            hint: "2:1 ratio (1200x600px)"
+            
+          - label: "Card Type"
+            name: "card"
+            widget: "select"
+            options:
+              - {label: "Summary", value: "summary"}
+              - {label: "Large Image", value: "summary_large_image"}
+              - {label: "Player", value: "player"}
+            default: "summary_large_image"
+            
+          - label: "Twitter Site"
+            name: "site"
+            widget: "string"
+            required: false
+            hint: "@username of website"
+            
+          - label: "Twitter Creator"
+            name: "creator"
+            widget: "string"
+            required: false
+            hint: "@username of content creator"
+        
+      # === SCHEMA.ORG ===
+      - label: "📊 Schema (Structured Data)"
         name: "schema"
         widget: "object"
         collapsed: true
+        summary: "Schema: {{fields.type}}"
+        hint: "Google Rich Snippets"
         fields:
-          - label: "Schema Type"
+          - label: "Article Type"
             name: "type"
             widget: "select"
             options:
-              - "BlogPosting"
-              - "Article"
-              - "NewsArticle"
+              - {label: "Blog Post", value: "BlogPosting"}
+              - {label: "News Article", value: "NewsArticle"}
+              - {label: "Article", value: "Article"}
+              - {label: "Tech Article", value: "TechArticle"}
+              - {label: "How-To", value: "HowTo"}
+              - {label: "Review", value: "Review"}
             default: "BlogPosting"
-
-          - label: "Enable FAQ Schema"
-            name: "enable_faq"
-            widget: "boolean"
-            default: false
-
-          - label: "FAQ Items"
-            name: "faq_items"
+            
+          - label: "Article Section"
+            name: "articleSection"
+            widget: "string"
+            required: false
+            hint: "e.g., Technology, Business"
+            
+          - label: "Word Count"
+            name: "wordCount"
+            widget: "number"
+            required: false
+            hint: "Auto-calculated if empty"
+      
+      # === ADVANCED ===
+      - label: "⚙️ Advanced Options"
+        name: "advanced"
+        widget: "object"
+        collapsed: true
+        fields:
+          - label: "Custom CSS Classes"
+            name: "cssClass"
+            widget: "string"
+            required: false
+            
+          - label: "Custom Template"
+            name: "layout"
+            widget: "select"
+            options: ["default", "minimal", "wide"]
+            default: "default"
+            required: false
+            
+          - label: "Redirect From"
+            name: "redirectFrom"
             widget: "list"
             required: false
+            hint: "Old URLs to redirect from"
+            
+          - label: "Related Posts"
+            name: "relatedPosts"
+            widget: "relation"
+            collection: "blog"
+            search_fields: ["title"]
+            value_field: "{{slug}}"
+            display_fields: ["title"]
+            multiple: true
+            required: false
+            max: 5
+
+  # ==================
+  # AUTHORS
+  # ==================
+  - name: "authors"
+    label: "👤 Authors"
+    label_singular: "Author"
+    folder: "src/content/authors"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "name"
+    summary: "{{name}} - {{title}}"
+    fields:
+      - {label: "👤 Name", name: "name", widget: "string", required: true}
+      - {label: "💼 Job Title", name: "title", widget: "string", required: false}
+      - {label: "📧 Email", name: "email", widget: "string", required: false, pattern: ['^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$', "Must be valid email"]}
+      - {label: "📝 Bio", name: "bio", widget: "text", required: true, hint: "Short author biography (150 chars)"}
+      - {label: "🖼️ Avatar", name: "avatar", widget: "image", required: true, hint: "Square image (400x400px)"}
+      - {label: "🌐 Website", name: "website", widget: "string", required: false}
+      - {label: "📍 Location", name: "location", widget: "string", required: false}
+      
+      - label: "🔗 Social Links"
+        name: "social"
+        widget: "object"
+        collapsed: false
+        fields:
+          - {label: "Twitter/X", name: "twitter", widget: "string", required: false, hint: "Username without @"}
+          - {label: "GitHub", name: "github", widget: "string", required: false}
+          - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
+          - {label: "Instagram", name: "instagram", widget: "string", required: false}
+          - {label: "YouTube", name: "youtube", widget: "string", required: false}
+          - {label: "Facebook", name: "facebook", widget: "string", required: false}
+
+  # ==================
+  # CATEGORIES
+  # ==================
+  - name: "categories"
+    label: "📂 Categories"
+    label_singular: "Category"
+    folder: "src/content/categories"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "name"
+    fields:
+      - {label: "📛 Name", name: "name", widget: "string", required: true}
+      - {label: "📝 Description", name: "description", widget: "text", required: true}
+      - {label: "🎨 Icon", name: "icon", widget: "image", required: false}
+      - {label: "🎨 Color", name: "color", widget: "color", required: false, allowInput: true}
+      - {label: "⭐ Featured", name: "featured", widget: "boolean", default: false}
+      - {label: "🔢 Order", name: "order", widget: "number", value_type: "int", required: false}
+
+  # ==================
+  # PAGES
+  # ==================
+  - name: "pages"
+    label: "📄 Pages"
+    label_singular: "Page"
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "📌 Title", name: "title", widget: "string", required: true}
+      - {label: "📄 Description", name: "description", widget: "text", required: true}
+      - {label: "📅 Publish Date", name: "pubDate", widget: "datetime", required: true}
+      - {label: "📝 Content", name: "body", widget: "markdown", required: true}
+      
+      - label: "🔍 SEO"
+        name: "seo"
+        widget: "object"
+        collapsed: true
+        fields:
+          - {label: "SEO Title", name: "title", widget: "string", required: false}
+          - {label: "Meta Description", name: "description", widget: "text", required: false}
+          - {label: "No Index", name: "noindex", widget: "boolean", default: false}
+
+  # ==================
+  # SITE SETTINGS
+  # ==================
+  - name: "settings"
+    label: "⚙️ Site Settings"
+    files:
+      - label: "🌐 General Settings"
+        name: "general"
+        file: "src/config/site.json"
+        fields:
+          - {label: "Site Title", name: "title", widget: "string"}
+          - {label: "Site Description", name: "description", widget: "text"}
+          - {label: "Site URL", name: "url", widget: "string"}
+          - {label: "Logo", name: "logo", widget: "image"}
+          - {label: "Favicon", name: "favicon", widget: "image"}
+          - {label: "Language", name: "lang", widget: "string", default: "en"}
+          - {label: "Posts Per Page", name: "postsPerPage", widget: "number", default: 12, value_type: "int"}
+          
+          - label: "Social Media"
+            name: "social"
+            widget: "object"
             fields:
-              - { label: "Question", name: "question", widget: "string" }
-              - { label: "Answer", name: "answer", widget: "text" }
-
-      # =================================================
-      # CONTENT QUALITY (EDITOR ASSIST)
-      # =================================================
-      - label: "Estimated Read Time (minutes)"
-        name: "read_time"
-        widget: "number"
-        required: false
-
-      - label: "Content Intent"
-        name: "search_intent"
-        widget: "select"
-        options:
-          - "Informational"
-          - "Commercial"
-          - "Transactional"
-          - "Navigational"
-        required: false
-
-      - label: "Internal Links to Add"
-        name: "internal_links"
-        widget: "list"
-        required: false
-
-      - label: "🧠 SEO / Editor Notes (Private)"
-        name: "editor_notes"
-        widget: "text"
-        required: false
-
-      # =================================================
-      # MAIN CONTENT
-      # =================================================
-      - label: "Content"
-        name: "body"
-        widget: "markdown"
+              - {label: "Twitter", name: "twitter", widget: "string", required: false}
+              - {label: "Facebook", name: "facebook", widget: "string", required: false}
+              - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
+              - {label: "GitHub", name: "github", widget: "string", required: false}
+              - {label: "YouTube", name: "youtube", widget: "string", required: false}
+              - {label: "Instagram", name: "instagram", widget: "string", required: false}
+          
+          - label: "SEO Defaults"
+            name: "seoDefaults"
+            widget: "object"
+            fields:
+              - {label: "Default OG Image", name: "ogImage", widget: "image"}
+              - {label: "Twitter Handle", name: "twitterHandle", widget: "string"}
+          
+          - label: "Analytics"
+            name: "analytics"
+            widget: "object"
+            fields:
+              - {label: "Google Analytics", name: "googleAnalytics", widget: "string", required: false}
+              - {label: "Google Tag Manager", name: "gtm", widget: "string", required: false}
+              - {label: "Facebook Pixel", name: "facebookPixel", widget: "string", required: false}
+      
+      - label: "🎨 Theme Settings"
+        name: "theme"
+        file: "src/config/theme.json"
+        fields:
+          - label: "Primary Color"
+            name: "primaryColor"
+            widget: "color"
+            allowInput: true
+          - label: "Secondary Color"
+            name: "secondaryColor"
+            widget: "color"
+            allowInput: true
+          - label: "Font Family"
+            name: "fontFamily"
+            widget: "select"
+            options: ["Inter", "Roboto", "Poppins", "Open Sans"]
