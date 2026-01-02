@@ -1,14 +1,55 @@
+# ============================
+# REQUIRED MEDIA CONFIG (FIX)
+# ============================
+media_folder: "src/assets/images"
+public_folder: "/images"
+
+# ============================
+# BASIC SETTINGS
+# ============================
+logo_url: https://bitdoze-astro-theme.pages.dev/logo.svg
+locale: en
+publish_mode: simple   # mobile-safe
+
+# ============================
+# AUTHENTICATION (GITHUB)
+# ============================
 backend:
   name: github
   repo: Ganesh239239/techfynews
   branch: main
 
+# ============================
+# COLLECTIONS
+# ============================
 collections:
-  - name: "posts"
-    label: "Posts"
+  - name: "blog"
+    label: "📝 Blog Posts"
     folder: "src/content/blog"
     create: true
     slug: "{{slug}}"
+
+    editor:
+      preview: false   # mobile-safe
+
     fields:
+      # CORE
       - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
+      - { label: "Author", name: "author", widget: "string", default: "Admin" }
+      - { label: "Hero Image", name: "heroImage", widget: "image", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+
+      # SEO (CMS ONLY)
+      - label: "SEO Settings"
+        name: "seo"
+        widget: "object"
+        collapsed: false
+        fields:
+          - { label: "SEO Title", name: "title", widget: "string", required: false }
+          - { label: "Meta Description", name: "description", widget: "text", required: false }
+          - { label: "Focus Keyword", name: "keyword", widget: "string", required: false }
+
+      # CONTENT
       - { label: "Content", name: "body", widget: "markdown" }
