@@ -1,35 +1,95 @@
-# Mobile-friendly settings
-logo_url: https://techfynews.pages.dev/logo.svg
+# =====================
+# BRANDING
+# =====================
+logo_url: https://bitdoze-astro-theme.pages.dev/logo.svg
+locale: en
 
-# Use simpler preview (no custom preview on mobile)
+# =====================
+# WORKFLOW
+# =====================
 publish_mode: editorial_workflow
 
+# =====================
+# AUTH (GITHUB ONLY)
+# =====================
 backend:
   name: github
   repo: Ganesh239239/techfynews
   branch: main
-  base_url: https://techfynews.pages.dev
-  auth_endpoint: /api/auth
 
+# =====================
+# MEDIA
+# =====================
 media_folder: "src/assets/images"
 public_folder: "/images"
 
-# Simplified collections for better mobile UX
+# =====================
+# COLLECTIONS
+# =====================
 collections:
   - name: "blog"
-    label: "📝 Posts"
+    label: "📝 Blog Posts"
     folder: "src/content/blog"
     create: true
     slug: "{{slug}}"
+
     editor:
-      preview: false  # Disable preview on mobile for better performance
+      preview: false   # CMS-only decision (theme unchanged)
+
     fields:
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Description", name: "description", widget: "text"}
-      - {label: "Date", name: "pubDate", widget: "datetime"}
-      - {label: "Author", name: "author", widget: "string"}
-      - {label: "Image", name: "heroImage", widget: "image"}
-      - {label: "Draft", name: "draft", widget: "boolean", default: false}
-      - {label: "Categories", name: "categories", widget: "list"}
-      - {label: "Tags", name: "tags", widget: "list"}
-      - {label: "Content", name: "body", widget: "markdown"}
+      # -----------------
+      # BASIC POST FIELDS
+      # -----------------
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Short Description", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
+      - { label: "Author", name: "author", widget: "string", default: "Admin" }
+      - { label: "Hero Image", name: "heroImage", widget: "image", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+
+      # -----------------
+      # TAXONOMY
+      # -----------------
+      - { label: "Categories", name: "categories", widget: "list", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+
+      # =====================
+      # SEO PANEL (CMS ONLY)
+      # =====================
+      - label: "🔍 SEO Settings"
+        name: "seo"
+        widget: "object"
+        collapsed: false
+        fields:
+          - { label: "SEO Title", name: "title", widget: "string", required: false }
+          - { label: "Meta Description", name: "description", widget: "text", required: false }
+          - { label: "Focus Keyword", name: "keyword", widget: "string", required: false }
+          - { label: "Canonical URL", name: "canonical", widget: "string", required: false }
+          - { label: "Noindex (hide from Google)", name: "noindex", widget: "boolean", default: false }
+          - { label: "Nofollow Links", name: "nofollow", widget: "boolean", default: false }
+
+      # -----------------
+      # SOCIAL (CMS ONLY)
+      # -----------------
+      - label: "📣 Social Sharing"
+        name: "social"
+        widget: "object"
+        collapsed: true
+        fields:
+          - { label: "OG Title", name: "og_title", widget: "string", required: false }
+          - { label: "OG Description", name: "og_description", widget: "text", required: false }
+          - { label: "OG Image", name: "og_image", widget: "image", required: false }
+
+      # -----------------
+      # EDITOR NOTES (CMS ONLY)
+      # -----------------
+      - label: "🧠 SEO Notes (Editor Only)"
+        name: "seo_notes"
+        widget: "text"
+        required: false
+        hint: "Use this for keyword plan, internal links, or reminders. Not published."
+
+      # -----------------
+      # CONTENT
+      # -----------------
+      - { label: "Content", name: "body", widget: "markdown" }
