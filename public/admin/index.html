@@ -6,102 +6,175 @@
   <meta name="robots" content="noindex" />
   <title>Content Manager - TechFy News</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  <style>
+    /* Fix for layout overlap issues */
+    body {
+      margin: 0;
+      overflow-x: hidden;
+    }
+    
+    /* Fix sidebar and main content overlap */
+    [class*="AppMainContainer"] {
+      display: flex !important;
+      overflow-x: hidden !important;
+    }
+    
+    /* Fix sidebar width */
+    [class*="Sidebar"] {
+      min-width: 250px !important;
+      max-width: 250px !important;
+      flex-shrink: 0 !important;
+    }
+    
+    /* Fix main content area */
+    [class*="MainView"] {
+      flex: 1 !important;
+      min-width: 0 !important;
+      overflow-x: auto !important;
+    }
+    
+    /* Fix collection list view overlap */
+    [class*="ListControlContainer"] {
+      overflow-x: auto !important;
+      max-width: 100% !important;
+    }
+    
+    /* Fix editor view overlap */
+    [class*="EditorContainer"] {
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    
+    /* Fix preview pane overlap */
+    [class*="PreviewPaneFrame"] {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    /* Fix widget controls overlap */
+    [class*="ControlContainer"] {
+      max-width: 100% !important;
+      overflow: visible !important;
+    }
+    
+    /* Fix object widget fields */
+    [class*="ObjectWidgetTopBar"] + div {
+      padding: 15px !important;
+      overflow: visible !important;
+    }
+    
+    /* Fix list widget */
+    [class*="ListControl"] {
+      overflow: visible !important;
+    }
+    
+    /* Fix markdown editor */
+    [class*="RawEditor"],
+    [class*="VisualEditor"] {
+      min-height: 400px !important;
+    }
+    
+    /* Fix collapsed object fields */
+    [class*="Collapsed"] {
+      margin-bottom: 10px !important;
+    }
+    
+    /* Fix modal dialogs */
+    [class*="ReactModal__Overlay"] {
+      z-index: 9999 !important;
+    }
+    
+    /* Fix dropdown menus */
+    [class*="Dropdown"] {
+      z-index: 100 !important;
+      position: relative !important;
+    }
+    
+    /* Fix image preview */
+    [class*="ImagePreview"] {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    
+    /* Fix workflow board columns */
+    [class*="WorkflowCard"] {
+      margin-bottom: 15px !important;
+    }
+    
+    /* Fix mobile responsiveness */
+    @media (max-width: 768px) {
+      [class*="Sidebar"] {
+        position: fixed !important;
+        left: -250px !important;
+        transition: left 0.3s ease !important;
+        z-index: 1000 !important;
+      }
+      
+      [class*="Sidebar"].open {
+        left: 0 !important;
+      }
+      
+      [class*="MainView"] {
+        margin-left: 0 !important;
+      }
+    }
+    
+    /* Fix z-index hierarchy */
+    [class*="TopBar"] {
+      z-index: 10 !important;
+    }
+    
+    [class*="Dropdown"],
+    [class*="Menu"] {
+      z-index: 50 !important;
+    }
+    
+    [class*="Modal"] {
+      z-index: 100 !important;
+    }
+    
+    /* Better spacing for fields */
+    [class*="FieldWrapper"] {
+      margin-bottom: 20px !important;
+      clear: both !important;
+    }
+    
+    /* Fix hint text overlap */
+    [class*="FieldHint"] {
+      display: block !important;
+      margin-top: 5px !important;
+      font-size: 0.875rem !important;
+      color: #666 !important;
+    }
+    
+    /* Fix button groups */
+    [class*="ButtonGroup"] {
+      display: flex !important;
+      gap: 10px !important;
+      flex-wrap: wrap !important;
+    }
+    
+    /* Ensure proper box-sizing */
+    * {
+      box-sizing: border-box !important;
+    }
+  </style>
 </head>
 <body>
   <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   
-  <!-- Custom Styles for Preview -->
-  <style>
-    .cms-preview-container {
-      padding: 40px;
-      max-width: 800px;
-      margin: 0 auto;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      line-height: 1.6;
-    }
-    
-    .cms-preview-header {
-      margin-bottom: 2rem;
-    }
-    
-    .cms-preview-categories {
-      margin-bottom: 1rem;
-    }
-    
-    .cms-preview-category {
-      display: inline-block;
-      padding: 4px 12px;
-      margin-right: 8px;
-      background: #3b82f6;
-      color: white;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-    
-    .cms-preview-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin: 0 0 1rem 0;
-      line-height: 1.2;
-      color: #111827;
-    }
-    
-    .cms-preview-description {
-      font-size: 1.125rem;
-      color: #6b7280;
-      margin-bottom: 1rem;
-    }
-    
-    .cms-preview-meta {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 2rem;
-    }
-    
-    .cms-preview-image {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-    }
-    
-    .cms-preview-content {
-      font-size: 1.125rem;
-      line-height: 1.75;
-      color: #374151;
-    }
-    
-    .cms-preview-tags {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid #e5e7eb;
-    }
-    
-    .cms-preview-tag {
-      display: inline-block;
-      padding: 4px 12px;
-      margin-right: 8px;
-      margin-bottom: 8px;
-      background: #f3f4f6;
-      color: #374151;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-    }
-  </style>
-  
   <script>
-    // Wait for CMS to load
-    CMS.registerPreviewStyle(`
-      body { margin: 0; }
-      .preview-pane-frame { padding: 0; }
-    `);
+    console.log('✅ Decap CMS loaded with layout fixes');
     
-    console.log('✅ Decap CMS loaded successfully with advanced features');
-    console.log('📝 Features enabled: Editorial Workflow, SEO, Social Media, Schema');
+    // Additional JavaScript fix for dynamic content
+    window.addEventListener('load', function() {
+      // Force reflow to fix any remaining layout issues
+      document.body.style.display = 'none';
+      document.body.offsetHeight;
+      document.body.style.display = '';
+    });
   </script>
 </body>
 </html>
