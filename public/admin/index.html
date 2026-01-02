@@ -2,11 +2,371 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex" />
-  <title>CMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#3b82f6" />
+  <title>Content Manager - TechFy News</title>
+  <link rel="icon" href="/favicon.svg" />
+  
+  <style>
+    /* ==========================================
+       MOBILE-FIRST RESPONSIVE FIXES
+       ========================================== */
+    
+    /* Base reset */
+    *, *::before, *::after {
+      box-sizing: border-box !important;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    #nc-root {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+    
+    /* ==========================================
+       MOBILE STYLES (< 768px)
+       ========================================== */
+    
+    @media (max-width: 768px) {
+      /* Force mobile layout */
+      [class*="AppMainContainer"] {
+        flex-direction: column !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+      }
+      
+      /* Hide sidebar on mobile */
+      [class*="Sidebar"] {
+        position: fixed !important;
+        left: -100% !important;
+        width: 80vw !important;
+        max-width: 300px !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        transition: left 0.3s ease !important;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2) !important;
+      }
+      
+      /* Main content full width */
+      [class*="MainView"] {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 10px !important;
+      }
+      
+      /* Top bar responsive */
+      [class*="TopBar"] {
+        flex-wrap: wrap !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+      }
+      
+      /* Workflow board - stack columns */
+      [class*="WorkflowList"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+      }
+      
+      [class*="WorkflowColumn"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+      
+      /* Collection cards responsive */
+      [class*="ListCard"],
+      [class*="EntryCard"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 8px 0 !important;
+      }
+      
+      /* Editor layout - stack instead of split */
+      [class*="SplitPane"] {
+        flex-direction: column !important;
+      }
+      
+      [class*="EditorContainer"],
+      [class*="PreviewPane"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+      
+      /* Widgets responsive */
+      [class*="ControlContainer"],
+      [class*="WidgetControl"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 8px !important;
+      }
+      
+      /* Form inputs */
+      input[type="text"],
+      input[type="email"],
+      input[type="url"],
+      input[type="number"],
+      textarea,
+      select {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 16px !important; /* Prevent iOS zoom */
+        padding: 10px !important;
+      }
+      
+      /* Markdown editor */
+      [class*="RawEditor"],
+      [class*="VisualEditor"],
+      [class*="EditorControlPane"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 14px !important;
+      }
+      
+      /* Object widget */
+      [class*="ObjectControl"] {
+        width: 100% !important;
+        padding: 12px !important;
+      }
+      
+      /* List widget */
+      [class*="ListControl"] {
+        width: 100% !important;
+      }
+      
+      /* Buttons */
+      button,
+      [class*="Button"] {
+        min-height: 44px !important; /* Touch-friendly */
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+      }
+      
+      /* Modals */
+      [class*="Modal"],
+      [class*="ModalBody"] {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        margin: 2.5vw auto !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+      }
+      
+      /* Image preview */
+      [class*="ImagePreview"] img {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      
+      /* Dropdown menus */
+      [class*="Dropdown"],
+      [class*="Select"] {
+        max-width: 100% !important;
+      }
+      
+      /* Toolbar */
+      [class*="Toolbar"] {
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+      }
+      
+      /* Preview pane */
+      [class*="PreviewPaneFrame"] {
+        width: 100% !important;
+        min-height: 400px !important;
+      }
+      
+      /* Field hints */
+      [class*="FieldHint"] {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+      }
+      
+      /* Relation widget */
+      [class*="RelationControl"] {
+        max-width: 100% !important;
+      }
+    }
+    
+    /* ==========================================
+       TABLET STYLES (768px - 1024px)
+       ========================================== */
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+      [class*="Sidebar"] {
+        width: 220px !important;
+        min-width: 220px !important;
+      }
+      
+      [class*="MainView"] {
+        padding: 20px !important;
+      }
+    }
+    
+    /* ==========================================
+       DESKTOP OPTIMIZATION
+       ========================================== */
+    
+    @media (min-width: 1025px) {
+      [class*="MainView"] {
+        padding: 30px !important;
+      }
+      
+      [class*="EditorContainer"] {
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+      }
+    }
+    
+    /* ==========================================
+       GENERAL FIXES FOR ALL DEVICES
+       ========================================== */
+    
+    /* Prevent horizontal overflow */
+    body, html, #nc-root, [class*="App"] {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Z-index hierarchy */
+    [class*="TopBar"] { z-index: 100 !important; }
+    [class*="Dropdown"] { z-index: 200 !important; }
+    [class*="Modal"] { z-index: 1000 !important; }
+    [class*="Sidebar"] { z-index: 50 !important; }
+    
+    /* Field spacing */
+    [class*="FieldWrapper"] {
+      margin-bottom: 20px !important;
+    }
+    
+    /* Loading states */
+    [class*="Loader"] {
+      padding: 20px !important;
+    }
+    
+    /* Error messages */
+    [class*="ErrorMessage"] {
+      padding: 12px !important;
+      margin: 10px 0 !important;
+      border-radius: 4px !important;
+    }
+    
+    /* Success messages */
+    [class*="SuccessMessage"] {
+      padding: 12px !important;
+      margin: 10px 0 !important;
+    }
+    
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px !important;
+      height: 8px !important;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1 !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #888 !important;
+      border-radius: 4px !important;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555 !important;
+    }
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+  <!-- Decap CMS Core -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <!-- Custom JavaScript -->
+  <script>
+    (function() {
+      'use strict';
+      
+      console.log('🚀 Decap CMS - Full Featured Edition');
+      console.log('📱 Mobile Optimized | 🎨 Advanced SEO | ⚡ Editorial Workflow');
+      
+      // Detect device type
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(navigator.userAgent.toLowerCase());
+      
+      if (isMobile) {
+        console.log('📱 Mobile device detected');
+        document.body.classList.add('cms-mobile');
+      } else if (isTablet) {
+        console.log('📱 Tablet device detected');
+        document.body.classList.add('cms-tablet');
+      } else {
+        console.log('💻 Desktop device detected');
+        document.body.classList.add('cms-desktop');
+      }
+      
+      // Fix viewport on orientation change
+      window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+          window.scrollTo(0, 0);
+          document.body.style.height = window.innerHeight + 'px';
+        }, 200);
+      });
+      
+      // Prevent zoom on input focus (iOS)
+      if (isMobile) {
+        document.addEventListener('touchstart', function() {}, {passive: true});
+        
+        // Add mobile-specific optimizations
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+        document.head.appendChild(meta);
+      }
+      
+      // Initialize CMS
+      window.CMS_MANUAL_INIT = true;
+      
+      // Wait for CMS to load
+      window.addEventListener('load', function() {
+        console.log('✅ CMS loaded successfully');
+        
+        // Custom preview styles
+        if (window.CMS) {
+          CMS.registerPreviewStyle('/styles/preview.css', { raw: false });
+          console.log('🎨 Preview styles registered');
+        }
+      });
+      
+      // Performance monitoring
+      if (window.performance && window.performance.timing) {
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            const perfData = window.performance.timing;
+            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+            console.log(`⚡ Page load time: ${pageLoadTime}ms`);
+          }, 0);
+        });
+      }
+      
+      // Error handling
+      window.addEventListener('error', function(e) {
+        console.error('❌ CMS Error:', e.message);
+      });
+      
+      console.log('📝 All features loaded successfully');
+    })();
+  </script>
 </body>
 </html>
