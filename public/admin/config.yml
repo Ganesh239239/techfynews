@@ -1,5 +1,5 @@
 # ==========================================
-# BITDOZE THEME + ADVANCED SEO
+# BITDOZE THEME + ADVANCED SEO - COMPLETE
 # ==========================================
 
 publish_mode: editorial_workflow
@@ -17,7 +17,6 @@ backend:
     uploadMedia: 'Upload "{{path}}"'
     deleteMedia: 'Delete "{{path}}"'
 
-# BitDoze media paths
 media_folder: "src/assets/images/{{year}}/{{month}}"
 public_folder: "/src/assets/images/{{year}}/{{month}}"
 
@@ -29,7 +28,7 @@ display_url: https://techfynews.pages.dev
 
 collections:
   # ==========================================
-  # BLOG POSTS (BitDoze Compatible + SEO)
+  # BLOG POSTS
   # ==========================================
   - name: "blog"
     label: "📝 Blog Posts"
@@ -38,7 +37,6 @@ collections:
     slug: "{{slug}}"
     preview_path: "blog/{{slug}}"
     
-    # Sorting and filtering
     sortable_fields: ['publishDate', 'title', 'author']
     sort_direction: 'Descending'
     summary: "{{title}} • {{publishDate | date('MMM DD, YYYY')}}"
@@ -60,23 +58,20 @@ collections:
         pattern: d{4}
       - label: "Category"
         field: category
-      - label: "Author"
-        field: author
     
     fields:
-      # === BitDoze Native Fields ===
       - label: "📌 Title"
         name: "title"
         widget: "string"
         required: true
-        hint: "Post title (50-60 characters for best SEO)"
+        hint: "Post title (50-60 characters recommended)"
         
       - label: "📄 Excerpt"
         name: "excerpt"
         widget: "text"
         required: true
-        hint: "Short description (155-160 characters for meta description)"
-        pattern: ['.{50,160}', "Should be 50-160 characters"]
+        hint: "Short description (155-160 characters for SEO)"
+        pattern: ['.{50,160}', "Must be 50-160 characters"]
         
       - label: "📅 Publish Date"
         name: "publishDate"
@@ -96,24 +91,31 @@ collections:
             name: "src"
             widget: "image"
             required: true
-            hint: "Recommended: 1200x630px for social sharing"
+            hint: "Recommended: 1200x630px"
           - label: "Alt Text"
             name: "alt"
             widget: "string"
             required: true
-            hint: "Describe image for accessibility & SEO"
+            hint: "Describe image for accessibility"
         
       - label: "📂 Category"
         name: "category"
-        widget: "string"
+        widget: "relation"
+        collection: "categories"
+        search_fields: ["name"]
+        value_field: "name"
+        display_fields: ["name"]
         required: true
-        hint: "Primary category for this post"
+        hint: "Select a category"
         
       - label: "✍️ Author"
         name: "author"
-        widget: "string"
+        widget: "relation"
+        collection: "authors"
+        search_fields: ["name"]
+        value_field: "name"
+        display_fields: ["name"]
         required: true
-        default: "Admin"
         
       - label: "🏷️ Tags"
         name: "tags"
@@ -121,27 +123,24 @@ collections:
         required: true
         min: 1
         max: 10
-        hint: "Add relevant tags (1-10 tags)"
+        hint: "Add tags (press Enter after each)"
         
       - label: "📝 Draft"
         name: "draft"
         widget: "boolean"
         default: false
-        hint: "Hide from production site"
         
-      # === Additional Fields ===
-      - label: "⭐ Featured Post"
+      - label: "⭐ Featured"
         name: "featured"
         widget: "boolean"
         default: false
         required: false
-        hint: "Show prominently on homepage"
         
       - label: "📚 Series"
         name: "series"
         widget: "string"
         required: false
-        hint: "Group related posts together"
+        hint: "Group related posts"
         
       - label: "⏱️ Reading Time"
         name: "readingTime"
@@ -151,14 +150,13 @@ collections:
         min: 1
         hint: "Minutes (auto-calculated if empty)"
         
-      - label: "📝 Post Content"
+      - label: "📝 Content"
         name: "body"
         widget: "markdown"
         required: true
-        hint: "Main post content in Markdown"
         
-      # === Advanced SEO (Beyond BitDoze defaults) ===
-      - label: "🔍 Advanced SEO"
+      # SEO Settings
+      - label: "🔍 SEO Settings"
         name: "seo"
         widget: "object"
         collapsed: true
@@ -169,71 +167,66 @@ collections:
             name: "focusKeyword"
             widget: "string"
             required: false
-            hint: "Primary keyword to optimize for (e.g., 'web development')"
+            hint: "Primary keyword (e.g., 'web development')"
             
           - label: "🔑 Additional Keywords"
             name: "keywords"
             widget: "list"
             required: false
-            hint: "Secondary keywords for SEO"
+            hint: "Secondary keywords"
             
           - label: "📝 Custom Meta Title"
             name: "metaTitle"
             widget: "string"
             required: false
-            hint: "Override title for search engines (50-60 chars)"
+            hint: "Override title (50-60 chars)"
             pattern: ['.{0,60}', "Max 60 characters"]
             
           - label: "📄 Custom Meta Description"
             name: "metaDescription"
             widget: "text"
             required: false
-            hint: "Override excerpt for meta description (155-160 chars)"
+            hint: "Override excerpt (155-160 chars)"
             pattern: ['.{0,160}', "Max 160 characters"]
             
           - label: "🔗 Canonical URL"
             name: "canonical"
             widget: "string"
             required: false
-            hint: "Prevent duplicate content (if republished from another site)"
+            hint: "Prevent duplicate content"
             
           - label: "🚫 No Index"
             name: "noindex"
             widget: "boolean"
             default: false
-            hint: "Hide this post from search engines"
             
           - label: "🔗 No Follow"
             name: "nofollow"
             widget: "boolean"
             default: false
-            hint: "Don't follow links in this post"
-        
-      # === Open Graph (Enhanced Social Sharing) ===
-      - label: "📱 Open Graph (Social Media)"
+      
+      # Open Graph
+      - label: "📱 Open Graph"
         name: "og"
         widget: "object"
         collapsed: true
         required: false
-        summary: "Social: {{fields.title}}"
         fields:
           - label: "OG Title"
             name: "title"
             widget: "string"
             required: false
-            hint: "Custom title for Facebook/LinkedIn (leave empty to use post title)"
             
           - label: "OG Description"
             name: "description"
             widget: "text"
             required: false
-            hint: "Custom description for social shares"
             
           - label: "OG Image"
             name: "image"
             widget: "image"
             required: false
-            hint: "Custom image for social sharing (1200x630px ideal)"
+            hint: "1200x630px recommended"
             
           - label: "OG Type"
             name: "type"
@@ -241,8 +234,8 @@ collections:
             options: ["article", "website"]
             default: "article"
             required: false
-        
-      # === Twitter Card ===
+      
+      # Twitter
       - label: "🐦 Twitter Card"
         name: "twitter"
         widget: "object"
@@ -261,7 +254,6 @@ collections:
             name: "title"
             widget: "string"
             required: false
-            hint: "Custom title for Twitter"
             
           - label: "Twitter Description"
             name: "description"
@@ -272,15 +264,14 @@ collections:
             name: "image"
             widget: "image"
             required: false
-            hint: "Custom image for Twitter (2:1 ratio)"
             
-          - label: "Creator Handle"
+          - label: "Creator"
             name: "creator"
             widget: "string"
             required: false
-            hint: "Twitter @username of content creator"
-        
-      # === Schema.org Structured Data ===
+            hint: "@username"
+      
+      # Schema
       - label: "📊 Schema Markup"
         name: "schema"
         widget: "object"
@@ -294,7 +285,7 @@ collections:
               - {label: "Blog Post", value: "BlogPosting"}
               - {label: "News Article", value: "NewsArticle"}
               - {label: "Tech Article", value: "TechArticle"}
-              - {label: "How-To Guide", value: "HowTo"}
+              - {label: "How-To", value: "HowTo"}
               - {label: "Review", value: "Review"}
             default: "BlogPosting"
             
@@ -302,13 +293,11 @@ collections:
             name: "articleSection"
             widget: "string"
             required: false
-            hint: "e.g., Technology, Business, Tutorials"
             
           - label: "Word Count"
             name: "wordCount"
             widget: "number"
             required: false
-            hint: "Total words (auto-calculated if empty)"
 
   # ==========================================
   # AUTHORS
@@ -319,17 +308,44 @@ collections:
     create: true
     slug: "{{slug}}"
     identifier_field: "name"
+    summary: "{{name}}"
     fields:
-      - {label: "👤 Name", name: "name", widget: "string", required: true}
-      - {label: "💼 Job Title", name: "title", widget: "string", required: false}
-      - {label: "📧 Email", name: "email", widget: "string", required: false}
-      - {label: "📝 Bio", name: "bio", widget: "text", required: true}
-      - {label: "🖼️ Avatar", name: "avatar", widget: "image", required: true}
-      - {label: "🌐 Website", name: "website", widget: "string", required: false}
+      - label: "👤 Name"
+        name: "name"
+        widget: "string"
+        required: true
+        
+      - label: "💼 Job Title"
+        name: "title"
+        widget: "string"
+        required: false
+        
+      - label: "📧 Email"
+        name: "email"
+        widget: "string"
+        required: false
+        
+      - label: "📝 Bio"
+        name: "bio"
+        widget: "text"
+        required: true
+        hint: "Short biography"
+        
+      - label: "🖼️ Avatar"
+        name: "avatar"
+        widget: "image"
+        required: true
+        hint: "Square image (400x400px)"
+        
+      - label: "🌐 Website"
+        name: "website"
+        widget: "string"
+        required: false
       
       - label: "🔗 Social Links"
         name: "social"
         widget: "object"
+        collapsed: false
         fields:
           - {label: "Twitter", name: "twitter", widget: "string", required: false, hint: "Username without @"}
           - {label: "GitHub", name: "github", widget: "string", required: false}
@@ -337,18 +353,41 @@ collections:
           - {label: "Instagram", name: "instagram", widget: "string", required: false}
 
   # ==========================================
-  # CATEGORIES
+  # CATEGORIES (Simplified - Description Optional)
   # ==========================================
   - name: "categories"
     label: "📂 Categories"
     folder: "src/content/categories"
     create: true
     slug: "{{slug}}"
+    identifier_field: "name"
+    summary: "{{name}}"
     fields:
-      - {label: "📛 Name", name: "name", widget: "string", required: true}
-      - {label: "📝 Description", name: "description", widget: "text", required: true}
-      - {label: "🎨 Color", name: "color", widget: "color", required: false}
-      - {label: "🔢 Order", name: "order", widget: "number", required: false}
+      - label: "📛 Category Name"
+        name: "name"
+        widget: "string"
+        required: true
+        hint: "e.g., Technology, Business, Tutorial"
+        
+      - label: "📝 Description"
+        name: "description"
+        widget: "text"
+        required: false
+        hint: "Optional: Category description"
+        
+      - label: "🎨 Color"
+        name: "color"
+        widget: "color"
+        required: false
+        hint: "Optional: Brand color"
+        
+      - label: "🔢 Display Order"
+        name: "order"
+        widget: "number"
+        required: false
+        value_type: "int"
+        min: 1
+        hint: "Optional: Sort order"
 
   # ==========================================
   # PAGES
@@ -379,14 +418,17 @@ collections:
   - name: "settings"
     label: "⚙️ Settings"
     files:
-      - label: "Site Configuration"
-        name: "site"
+      - label: "🌐 General Settings"
+        name: "general"
         file: "src/config/site.json"
         fields:
           - {label: "Site Title", name: "title", widget: "string"}
           - {label: "Site Description", name: "description", widget: "text"}
           - {label: "Site URL", name: "url", widget: "string", hint: "https://techfynews.pages.dev"}
+          - {label: "Logo", name: "logo", widget: "image", required: false}
+          - {label: "Favicon", name: "favicon", widget: "image", required: false}
           - {label: "Language", name: "lang", widget: "string", default: "en"}
+          - {label: "Posts Per Page", name: "postsPerPage", widget: "number", default: 12, value_type: "int"}
           
           - label: "Social Media"
             name: "social"
@@ -396,13 +438,15 @@ collections:
               - {label: "Facebook", name: "facebook", widget: "string", required: false}
               - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
               - {label: "GitHub", name: "github", widget: "string", required: false}
+              - {label: "YouTube", name: "youtube", widget: "string", required: false}
+              - {label: "Instagram", name: "instagram", widget: "string", required: false}
           
           - label: "SEO Defaults"
             name: "seoDefaults"
             widget: "object"
             fields:
-              - {label: "Default OG Image", name: "ogImage", widget: "image"}
-              - {label: "Twitter Site", name: "twitterSite", widget: "string", hint: "@username"}
+              - {label: "Default OG Image", name: "ogImage", widget: "image", required: false}
+              - {label: "Twitter Site", name: "twitterSite", widget: "string", required: false, hint: "@username"}
           
           - label: "Analytics"
             name: "analytics"
@@ -410,3 +454,4 @@ collections:
             fields:
               - {label: "Google Analytics", name: "googleAnalytics", widget: "string", required: false, hint: "G-XXXXXXXXXX"}
               - {label: "Google Tag Manager", name: "gtm", widget: "string", required: false}
+              - {label: "Facebook Pixel", name: "facebookPixel", widget: "string", required: false}
